@@ -37,6 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'djoser',
     'restaurant',
 ]
 
@@ -55,7 +58,7 @@ ROOT_URLCONF = 'littlelemon.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['templates'],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -75,8 +78,15 @@ WSGI_APPLICATION = 'littlelemon.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'LittleLemon',
+        'USER': 'your_mysql_username',
+        'PASSWORD': 'your_mysql_password',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
+        }
     }
 }
 
@@ -121,3 +131,38 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# REST Framework Configuration
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ],
+    # Disable throttling for testing
+    # 'DEFAULT_THROTTLE_CLASSES': [
+    #     'rest_framework.throttling.AnonRateThrottle',
+    #     'rest_framework.throttling.UserRateThrottle'
+    # ],
+    # 'DEFAULT_THROTTLE_RATES': {
+    #     'anon': '2/minute',
+    #     'user': '10/minute'
+    # }
+}
+
+# Djoser Configuration
+DJOSER = {
+    "USER_ID_FIELD": "username",
+    "LOGIN_FIELD": "username",
+    'SERIALIZERS': {
+        'user_create': 'djoser.serializers.UserCreateSerializer',
+        'user': 'djoser.serializers.UserSerializer',
+        'current_user': 'djoser.serializers.UserSerializer',
+        'user_delete': 'djoser.serializers.UserDeleteSerializer',
+    },
+}
